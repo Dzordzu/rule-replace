@@ -1,0 +1,37 @@
+[[rule]]
+replace.line = "// TO REPLACE"
+with.string = "// REPLACED "
+
+[[rule]]
+replace.text = "my-name"
+with.string = "your-name"
+which = "first"
+keep_spaces = true
+
+[[rule]]
+replace.text = "my-other-name"
+with.string = "your-other-name"
+which = "first in line"
+keep_spaces = false
+
+[[rule]]
+replace.text = "multiline-spaces"
+with.string = "mltln\n test"
+keep_spaces = true
+
+[[rule]]
+replace.text = "multiline-no-spaces"
+with.string = "mltln\n test"
+keep_false = false
+
+# [[rule]]
+# replace.regex = "# MY-TEXT (.*)"
+# with.pattern = "!! $1"
+# keep_ident = true
+#
+[[rule]]
+replace.lines_between = ["// MY-START", "// MY-END"]
+
+   [rule.with]
+   template = "./example.j2"
+   values = "./example.json"

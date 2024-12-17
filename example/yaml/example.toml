@@ -1,0 +1,15 @@
+[[rule]]
+replace.line = "# replace:author"
+with.string = "author: me\ncompany: my-company"
+keep_spaces = true
+
+[[rule]]
+replace.text = "FORMAT"
+with.string = "YAML"
+which = "every"
+keep_spaces = true
+
+[[rule]]
+replace.lines_between = ["# BEGIN", "# END"]
+with.file = "./included.yml"
+keep_spaces = true

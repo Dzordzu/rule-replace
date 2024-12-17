@@ -1,0 +1,18 @@
+# FORMAT
+# vim: ft=yaml
+
+about:
+  title: "FORMAT sucks"
+  # replace:author
+format: "FORMAT"
+more:
+  # BEGIN
+  source: internal
+  support: false
+  # END
+
+and: |
+  AA {
+     # BEGIN
+     # END
+  }

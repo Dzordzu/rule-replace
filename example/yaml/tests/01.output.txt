@@ -1,0 +1,27 @@
+# YAML
+# vim: ft=yaml
+
+about:
+  title: "YAML sucks"
+  author: me
+  company: my-company
+format: "YAML"
+more:
+  # BEGIN
+  source: external
+  support:
+    by: author
+    with: love
+
+  # END
+
+and: |
+  AA {
+     # BEGIN
+     source: external
+     support:
+       by: author
+       with: love
+
+     # END
+  }
