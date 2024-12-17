@@ -16,3 +16,7 @@ and: |
      # BEGIN
      # END
   }
+
+jinja:
+  # JINJA-BEGIN
+  # JINJA-END

@@ -13,3 +13,8 @@ keep_spaces = true
 replace.lines_between = ["# BEGIN", "# END"]
 with.file = "./included.yml"
 keep_spaces = true
+
+[[rule]]
+replace.lines_between = ["# JINJA-BEGIN", "# JINJA-END"]
+with.template = "./templates/info.j2"
+with.values = "./values.json"

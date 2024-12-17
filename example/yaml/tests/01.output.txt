@@ -25,3 +25,8 @@ and: |
 
      # END
   }
+
+jinja:
+  # JINJA-BEGIN
+  info: no info
+  # JINJA-END
