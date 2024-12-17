@@ -204,7 +204,6 @@ fn evaluate_rule(
                     let ident = find_last_ident(line);
                     while let Some(line) = lines.next() {
                         if line.contains(end) {
-                            println!("I{}E", ident);
                             result.push_str(&ident);
                             result.push_str(&update_ident(&replacement, &ident));
                             result.push('\n');
