@@ -4,7 +4,6 @@ use anyhow::Context;
 use clap::Parser;
 use config::Config;
 use minijinja::Environment;
-use std::ffi::OsString;
 use std::fs::read_dir;
 use std::io::ErrorKind;
 use std::path::PathBuf;
@@ -12,12 +11,10 @@ use std::{env, io};
 
 pub fn get_project_root() -> io::Result<PathBuf> {
     let path = env::current_dir()?;
-    let mut path_ancestors = path.as_path().ancestors();
+    let path_ancestors = path.as_path().ancestors();
 
-    while let Some(p) = path_ancestors.next() {
-        let has_cargo = read_dir(p)?
-            .into_iter()
-            .any(|p| p.unwrap().file_name() == OsString::from("Cargo.lock"));
+    for p in path_ancestors {
+        let has_cargo = read_dir(p)?.any(|p| p.unwrap().file_name() == *"Cargo.lock");
         if has_cargo {
             return Ok(PathBuf::from(p));
         }
@@ -89,7 +86,7 @@ fn test_update_ident() {
 }
 
 fn handle_jinja(
-    config_dir: &std::path::PathBuf,
+    config_dir: &std::path::Path,
     template: &std::path::PathBuf,
     values: &std::path::PathBuf,
 ) -> anyhow::Result<String> {
@@ -116,14 +113,14 @@ fn handle_jinja(
 fn evaluate_rule(
     content: String,
     rule: &config::Rule,
-    config_dir: &std::path::PathBuf,
+    config_dir: &std::path::Path,
 ) -> anyhow::Result<String> {
     let mut replacement = match &rule.with {
         config::With::File { file } => {
             let filepath = config_dir.join(file);
             std::fs::read_to_string(&filepath).context(format!("File: {filepath:?}"))?
         }
-        config::With::Jinja { template, values } => handle_jinja(config_dir, &template, &values)?,
+        config::With::Jinja { template, values } => handle_jinja(config_dir, template, values)?,
         config::With::String { string } => string.clone(),
         config::With::Pattern { pattern } => pattern.clone(),
     };
@@ -205,7 +202,7 @@ fn evaluate_rule(
                 result.push('\n');
                 if line.contains(start) {
                     let ident = find_last_ident(line);
-                    while let Some(line) = lines.next() {
+                    for line in lines.by_ref() {
                         if line.contains(end) {
                             result.push_str(&ident);
                             result.push_str(&update_ident(&replacement, &ident));
@@ -225,7 +222,7 @@ fn evaluate_rule(
 fn replace(
     mut content: String,
     config: &Config,
-    config_dir: &std::path::PathBuf,
+    config_dir: &std::path::Path,
 ) -> anyhow::Result<String> {
     for rule in &config.rules {
         content = evaluate_rule(content, rule, config_dir)?;
@@ -239,7 +236,7 @@ fn example_config() {
 
     for examples in examples.read_dir().unwrap().filter_map(|entry| {
         entry
-            .and_then(|child| Ok(child.path().is_dir().then_some(child.path())))
+            .map(|child| child.path().is_dir().then_some(child.path()))
             .ok()
             .flatten()
     }) {
