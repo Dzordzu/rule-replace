@@ -35,6 +35,9 @@ pub struct Args {
 
     #[arg(short, long, required = true)]
     config: std::path::PathBuf,
+
+    #[arg(short, long, action)]
+    inplace: bool,
 }
 
 fn find_last_ident(text: &str) -> String {
@@ -270,14 +273,22 @@ fn main() -> anyhow::Result<()> {
     let config_content = std::fs::read_to_string(&args.config).unwrap();
     let config: Config = toml::from_str(&config_content).unwrap();
 
-    print!("{}", replace(
+    let result = replace(
         file_content,
         &config,
         &args
             .config
             .parent()
             .map(|x| x.to_path_buf())
-            .ok_or(anyhow::anyhow!("Could not retrive parent"))?,
-    )?);
+            .ok_or(anyhow::anyhow!(
+                "Could not retrive parent directory of the config"
+            ))?,
+    )?;
+
+    if args.inplace {
+        std::fs::write(&args.file, result).context("Error with saving to file")?;
+    } else {
+        print!("{}", result);
+    }
     Ok(())
 }
